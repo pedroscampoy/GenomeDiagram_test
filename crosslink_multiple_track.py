@@ -9,6 +9,15 @@ from reportlab.lib.units import cm
 from Bio.Graphics import GenomeDiagram
 from Bio.Graphics.GenomeDiagram import CrossLink
 
+def get_feature(features, id, tags=["locus_tag", "gene"]):
+    """Search list of SeqFeature objects for an identifier under the given tags."""
+    for f in features:
+        for key in tags:
+            #tag may not be present in this feature
+            for x in f.qualifiers.get(key, []):
+                if x == id:
+                     return f
+    raise KeyError(id)
 
 diagram_name = 'TEST_CL'
 gd_diagram = GenomeDiagram.Diagram(diagram_name)
@@ -33,8 +42,10 @@ for record,record_length in dict_records.items():
 
     gd_track_for_features = gd_diagram.new_track(5 - 2 * i,name=record, greytrack=True, height=0.5,
                                                  start=0, end=record_length)
+    name_for_featureset = 'gd_set_features_'+record
+    print(name_for_featureset)
 
-    gd_set_features = gd_track_for_features.new_set()
+    name_for_featureset = gd_track_for_features.new_set(name=record)
     #gd_track_for_features = gd_diagram.new_track(1, name=record, greytrack=True, start=0, end=record_length)
     #gd_set_features = gd_track_for_features.new_set()
 
@@ -58,7 +69,7 @@ for record,record_length in dict_records.items():
                     max_position = int(row[2]) 
 
                 feature = SeqFeature(FeatureLocation(int(row[1]), int(row[2])), strand=+1)
-                gd_set_features.add_feature(feature, name=row[3], label=True, color="blue",
+                name_for_featureset.add_feature(feature, name=row[3], label=True, color="blue",
                             label_size=6, label_angle=90, label_position="middle", sigil="ARROW", arrowshaft_height=1.0)
 
 
@@ -78,8 +89,9 @@ for record,record_length in dict_records.items():
                     max_position = int(row[2]) 
 
                 feature = SeqFeature(FeatureLocation(int(row[1]), int(row[2])), strand=-1)
-                gd_set_features.add_feature(feature, name=row[3], label=True, color="green",
+                name_for_featureset.add_feature(feature, name=row[3], label=True, color="green",
                             label_size=6, label_angle=90, label_position="middle", sigil="ARROW", arrowshaft_height=1.0)
+                #print(name_for_featureset.feature)
 
 
 #for score, x, y in A_vs_B:
@@ -88,23 +100,13 @@ for record,record_length in dict_records.items():
 #link_xy = CrossLink((5, 321, 1418), (3, 5544, 6503), color=colors.lightgrey)
 #gd_diagram.cross_track_links.append(link_xy)
 
-print('TEST')
-print(gd_set_features.id)
+#print('TEST')
+#print(gd_set_features.__dict__)
 
 
-
-# track_X = gd_diagram.tracks[5]
-# track_Y = gd_diagram.tracks[3]
-#     for score, id_X, id_Y in A_vs_B:
-#         feature_X = get_feature(rec_X.features, id_X)
-#         feature_Y = get_feature(rec_Y.features, id_Y)
-#         color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick, 0, 100, score)
-#         link_xy = CrossLink((track_X, feature_X.location.start, feature_X.location.end),
-#                             (track_Y, feature_Y.location.start, feature_Y.location.end),
-#                             color, colors.lightgrey)
-#         gd_diagram.cross_track_links.append(link_xy)
 
 #gd_diagram.draw(format='linear', pagesize=(15*cm,4*cm), fragments=1,start=0, end=max_position)
-#gd_diagram.draw(format='linear', pagesize='A4', fragments=1,start=0, end=max_position)
+gd_diagram.draw(format='linear', pagesize='A4', fragments=1,start=0, end=max_position)
 
-#gd_diagram.write( diagram_name + ".pdf", "pdf")
+gd_diagram.write( diagram_name + ".pdf", "pdf")
+gd_diagram.write( diagram_name + ".svg", "SVG")
