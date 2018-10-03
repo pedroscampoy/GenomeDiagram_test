@@ -17,10 +17,10 @@ dict_records = {'NC_016838':122799, 'NC_016839':105974, 'NC_016846':111195}
 #NC_016838.1 vs NC_016839.1 made up reltions
 A_vs_B = [
     (99, "mcpQ", "tetR"),
-    (33, "04374", "xerD")
+    (33, "ligA", "rhsC")
 ]
 
-A_vs_B = [
+B_vs_C = [
     (99, "tetA", "pld"),
     (33, "rhsC", "traC")
 ]
@@ -91,11 +91,27 @@ for record,record_length in dict_records.items():
                 num += 1
     
 
-    for feature_name in range(1,len(name_for_featureset)):
-        print(name_for_featureset[feature_name].name)
-    
+    for feature_number in range(1,len(name_for_featureset)):
+        for score, cross_link_feature_A, cross_link_feature_B in A_vs_B:
+            if name_for_featureset[feature_number].name == cross_link_feature_A:
+                feature_x = name_for_featureset[feature_number]
+                track_x_name = name_for_featureset.name
+                track_x = name_for_featureset
+            if name_for_featureset[feature_number].name == cross_link_feature_B and name_for_featureset.name != str(track_x_name):
+                feature_y = name_for_featureset[feature_number]
+                track_y_name = name_for_featureset.name
+                track_y = name_for_featureset
+                color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick,
+                                                 0, 100, score)
 
-
+                border = colors.lightgrey
+                # link_xy = CrossLink((track_x, feature_x.location.start, feature_x.location.end),
+                #             (track_y, feature_y.location.start, feature_y.location.end),
+                #             color, colors.lightgrey)
+                # gd_diagram.cross_track_links.append(link_xy)
+                
+                gd_diagram.cross_track_links.append(CrossLink(feature_x, feature_y, color, border))
+                print('AMOR')
 
     i += 1
     #print (len(name_for_featureset))
