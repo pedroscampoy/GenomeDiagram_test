@@ -9,19 +9,10 @@ from reportlab.lib.units import cm
 from Bio.Graphics import GenomeDiagram
 from Bio.Graphics.GenomeDiagram import CrossLink
 
-def get_feature(features, id, tags=["locus_tag", "gene"]):
-    """Search list of SeqFeature objects for an identifier under the given tags."""
-    for f in features:
-        for key in tags:
-            #tag may not be present in this feature
-            for x in f.qualifiers.get(key, []):
-                if x == id:
-                     return f
-    raise KeyError(id)
 
 diagram_name = 'TEST_CL'
 gd_diagram = GenomeDiagram.Diagram(diagram_name)
-dict_records = {'NC_016838.1':122799, 'NC_016839.1':105974, 'NC_016846.1':111195}
+dict_records = {'NC_016838':122799, 'NC_016839':105974, 'NC_016846':111195}
 
 #NC_016838.1 vs NC_016839.1 made up reltions
 A_vs_B = [
@@ -40,37 +31,40 @@ for record,record_length in dict_records.items():
     # and also serve to make the tracks vertically more compressed)
     
 
-    gd_track_for_features = gd_diagram.new_track(5 - 2 * i,name=record, greytrack=True, height=0.5,
+    gd_track_for_features = gd_diagram.new_track(5 - 2 * i,name=record, greytrack=True, greytrack_labels=5, scale_ticks=0,height=0.5,
                                                  start=0, end=record_length)
     name_for_featureset = 'gd_set_features_'+record
-    print(name_for_featureset)
+    print('--------------------------------------------------------------->'+name_for_featureset)
 
     name_for_featureset = gd_track_for_features.new_set(name=record)
     #gd_track_for_features = gd_diagram.new_track(1, name=record, greytrack=True, start=0, end=record_length)
     #gd_set_features = gd_track_for_features.new_set()
 
-    i += 1
+    
 
+    num = 0
 
     with open('KPN.gff.forward.coordinates', 'r') as bed_forward_file:
         bed_readed = csv.reader(bed_forward_file, delimiter="\t")
 
         #record = None
-        max_position = 0
 
         for row in bed_readed:
             #NC_016839.1	122155	122652	04281
             #record  loc1    loc2    name
             if row[0] == record:
+                
                 #if record is None:
                 #    record = 'row[0]'
             #Add three features to show the strand options,
-                if int(row[2]) > max_position:
-                    max_position = int(row[2]) 
+                #print('NUM IS ' + str(num))
 
                 feature = SeqFeature(FeatureLocation(int(row[1]), int(row[2])), strand=+1)
                 name_for_featureset.add_feature(feature, name=row[3], label=True, color="blue",
                             label_size=6, label_angle=90, label_position="middle", sigil="ARROW", arrowshaft_height=1.0)
+
+                #print(name_for_featureset[int(num)].name)
+                num += 1
 
 
     with open('KPN.gff.reverse.coordinates', 'r') as bed_reverse_file:
@@ -85,14 +79,33 @@ for record,record_length in dict_records.items():
                 #if record is None:
                 #    record = 'row[0]'
             #Add three features to show the strand options,
-                if int(row[2]) > max_position:
-                    max_position = int(row[2]) 
+                
+                #print('NUM IS ' + str(num))
+
 
                 feature = SeqFeature(FeatureLocation(int(row[1]), int(row[2])), strand=-1)
                 name_for_featureset.add_feature(feature, name=row[3], label=True, color="green",
                             label_size=6, label_angle=90, label_position="middle", sigil="ARROW", arrowshaft_height=1.0)
-                #print(name_for_featureset.feature)
 
+                #print(name_for_featureset[int(num)].name)
+                num += 1
+    
+
+    for feature_name in range(1,len(name_for_featureset)):
+        print(name_for_featureset[feature_name].name)
+    
+
+
+
+    i += 1
+    #print (len(name_for_featureset))
+    #for score, nameA, nameB in A_vs_B:
+        
+#if name_for_featureset.name == nameA:
+#            print(score)
+#            print(nameA)
+
+#print(name_for_featureset.features[4].name)
 
 #for score, x, y in A_vs_B:
 #color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick, 0, 100, 50)
@@ -101,12 +114,15 @@ for record,record_length in dict_records.items():
 #gd_diagram.cross_track_links.append(link_xy)
 
 #print('TEST')
-#print(gd_set_features.__dict__)
-
+#print(gd_track_for_features.__dict__)
+#print(len(gd_track_for_features()))
+#for i in gd_set_features_NC_016838.features:
+#   print(i)
+#get_feature(gd_set_features_NC_016838,5544, 6503)
 
 
 #gd_diagram.draw(format='linear', pagesize=(15*cm,4*cm), fragments=1,start=0, end=max_position)
-gd_diagram.draw(format='linear', pagesize='A4', fragments=1,start=0, end=max_position)
+gd_diagram.draw(format='linear', pagesize='A4', fragments=1,start=0)
 
 gd_diagram.write( diagram_name + ".pdf", "pdf")
 gd_diagram.write( diagram_name + ".svg", "SVG")
