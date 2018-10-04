@@ -15,16 +15,16 @@ gd_diagram = GenomeDiagram.Diagram(diagram_name)
 dict_records = {'NC_016838':122799, 'NC_016839':105974, 'NC_016846':111195}
 
 #NC_016838.1 vs NC_016839.1 made up reltions
-
-features_x_link = []
-features_y_link = []
+A_vs_B = [
+    (99, "mcpQ", "tetR"),
+    (33, "ligA", "rhsC")
+]
 
 B_vs_C = [
     (99, "tetA", "pld"),
     (33, "rhsC", "traC")
 ]
 i = 0
-
 for record,record_length in dict_records.items():
     # Allocate tracks 5 (top), 3, 1 (bottom) for A, B, C
     # (empty tracks 2 and 4 add useful white space to emphasise the cross links
@@ -41,7 +41,7 @@ for record,record_length in dict_records.items():
     #gd_set_features = gd_track_for_features.new_set()
 
     
-    count_feature = 0
+
     num = 0
 
     with open('KPN.gff.forward.coordinates', 'r') as bed_forward_file:
@@ -56,7 +56,7 @@ for record,record_length in dict_records.items():
                 
                 #if record is None:
                 #    record = 'row[0]'
-                #Add three features to show the strand options,
+            #Add three features to show the strand options,
                 #print('NUM IS ' + str(num))
 
                 feature = SeqFeature(FeatureLocation(int(row[1]), int(row[2])), strand=+1)
@@ -90,66 +90,54 @@ for record,record_length in dict_records.items():
                 #print(name_for_featureset[int(num)].name)
                 num += 1
     
-    A_vs_B = [
-    (50, "mcpQ", "tetR"),
-    (33, "uvrB", "rhsC"),
-    (10, "04321", "05658"),
-    (100, "ligA", "soj"),
-    (100, "ligA", "korB"),
-    (100, "smc", "xerD")
-]
-    
 
-    for number, cross_link_relation in enumerate(A_vs_B):
-        score = cross_link_relation[0]
-        cross_link_feature_A = cross_link_relation[1]
-        cross_link_feature_B = cross_link_relation[2]
-        print ("NUMBER IS:" + str(number))
-
-        for feature_number in range(1,len(name_for_featureset)):
-
+    for feature_number in range(1,len(name_for_featureset)):
+        for score, cross_link_feature_A, cross_link_feature_B in A_vs_B:
             if name_for_featureset[feature_number].name == cross_link_feature_A:
-                
-                features_x_link.insert(number, name_for_featureset[feature_number])
-
-                print ("Test FEATUREA 1: ")
-                print (number)
-                print (name_for_featureset[feature_number].name)
-                print(features_x_link)
-
+                feature_x = name_for_featureset[feature_number]
                 track_x_name = name_for_featureset.name
                 track_x = name_for_featureset
-                #print ("Test FEATUREA: " + features_x_link[number])
-                #print (number)
-                
-
-
             if name_for_featureset[feature_number].name == cross_link_feature_B and name_for_featureset.name != str(track_x_name):
-                features_y_link.insert(number, name_for_featureset[feature_number])
-                #feature_y_n = name_for_featureset[feature_number]
+                feature_y = name_for_featureset[feature_number]
                 track_y_name = name_for_featureset.name
                 track_y = name_for_featureset
+                color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick,
+                                                 0, 100, score)
 
-                print ("Test FEATUREA 2: ")
-                print (number)
-                print (name_for_featureset[feature_number].name)
-                print (features_y_link)
-
-               
-    
-
-    for feature_x, feature_y in zip(features_x_link, features_y_link):
-        #print("SCORE: " + str(count_feature))
-        score = A_vs_B[count_feature][0]
-        color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick,
-                                             0, 100, score)
-        border = colors.lightgrey
-        gd_diagram.cross_track_links.append(CrossLink(feature_x, feature_y, color, border))
-        count_feature += 1
+                border = colors.lightgrey
+                # link_xy = CrossLink((track_x, feature_x.location.start, feature_x.location.end),
+                #             (track_y, feature_y.location.start, feature_y.location.end),
+                #             color, colors.lightgrey)
+                # gd_diagram.cross_track_links.append(link_xy)
+                
+                gd_diagram.cross_track_links.append(CrossLink(feature_x, feature_y, color, border))
+                print('MATCH')
 
     i += 1
-    
+    #print (len(name_for_featureset))
+    #for score, nameA, nameB in A_vs_B:
+        
+#if name_for_featureset.name == nameA:
+#            print(score)
+#            print(nameA)
 
+#print(name_for_featureset.features[4].name)
+
+#for score, x, y in A_vs_B:
+#color = colors.linearlyInterpolatedColor(colors.white, colors.firebrick, 0, 100, 50)
+#    border = colors.lightgrey 	
+#link_xy = CrossLink((5, 321, 1418), (3, 5544, 6503), color=colors.lightgrey)
+#gd_diagram.cross_track_links.append(link_xy)
+
+#print('TEST')
+#print(gd_track_for_features.__dict__)
+#print(len(gd_track_for_features()))
+#for i in gd_set_features_NC_016838.features:
+#   print(i)
+#get_feature(gd_set_features_NC_016838,5544, 6503)
+
+
+#gd_diagram.draw(format='linear', pagesize=(15*cm,4*cm), fragments=1,start=0, end=max_position)
 gd_diagram.draw(format='linear', pagesize='A4', fragments=1,start=0)
 
 gd_diagram.write( diagram_name + ".pdf", "pdf")
