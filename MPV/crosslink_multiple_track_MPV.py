@@ -10,7 +10,7 @@ from Bio.Graphics import GenomeDiagram
 from Bio.Graphics.GenomeDiagram import CrossLink
 
 
-diagram_name = 'TEST_CL_light_blue'
+diagram_name = 'TEST_CL_light_blue_large'
 gd_diagram = GenomeDiagram.Diagram(diagram_name)
 dict_records = {
 'unitig_3_K3061' : 46164,
@@ -156,7 +156,7 @@ for record,record_length in dict_records.items():
 
     
 
-gd_diagram.draw(format='linear', pagesize='A3', fragments=1,start=0)
+gd_diagram.draw(format='linear', pagesize='A3', fragments=10,start=0)
 
 gd_diagram.write( diagram_name + ".pdf", "pdf")
 gd_diagram.write( diagram_name + ".svg", "SVG")
