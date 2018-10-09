@@ -10,7 +10,7 @@ from Bio.Graphics import GenomeDiagram
 from Bio.Graphics.GenomeDiagram import CrossLink
 
 
-diagram_name = 'TEST_CL_light_blue_large'
+diagram_name = 'TEST_CL_light_blue_large_5'
 gd_diagram = GenomeDiagram.Diagram(diagram_name)
 dict_records = {
 'unitig_3_K3061' : 46164,
@@ -36,7 +36,10 @@ for record,record_length in dict_records.items():
     # and also serve to make the tracks vertically more compressed)
     
 
-    gd_track_for_features = gd_diagram.new_track(4 - 1 * i,name=record, greytrack=True, greytrack_labels=5, scale_ticks=0,height=0.5,
+
+    #gd_track_for_features = gd_diagram.new_track(4 - 1 * i,name=record, greytrack=True, greytrack_labels=4, scale_ticks=0,height=1,
+
+    gd_track_for_features = gd_diagram.new_track(1,name=record, greytrack=True, greytrack_labels=1, scale_ticks=0,height=1,
                                                  start=0, end=record_length)
     name_for_featureset = 'gd_set_features_'+record
     print('--------------------------------------------------------------->'+name_for_featureset)
@@ -155,8 +158,8 @@ for record,record_length in dict_records.items():
 '''
 
     
-
-gd_diagram.draw(format='linear', pagesize='A3', fragments=10,start=0)
+#pagesize=(20*cm,20*cm)
+gd_diagram.draw(format='linear', pagesize=(84*cm,60*cm), fragments=5,start=0)
 
 gd_diagram.write( diagram_name + ".pdf", "pdf")
 gd_diagram.write( diagram_name + ".svg", "SVG")
