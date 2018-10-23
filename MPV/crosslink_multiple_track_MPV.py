@@ -10,7 +10,7 @@ from Bio.Graphics import GenomeDiagram
 from Bio.Graphics.GenomeDiagram import CrossLink
 
 
-diagram_name = 'TEST_CL_light_blue_large_1'
+diagram_name = 'TEST_CL_light_blue_large_1_'
 gd_diagram = GenomeDiagram.Diagram(diagram_name)
 dict_records = {
 'unitig_3_K3061' : 46164,
@@ -37,9 +37,9 @@ for record,record_length in dict_records.items():
     
 
 
-    gd_track_for_features = gd_diagram.new_track(4 - 1 * i,name=record, greytrack=True, greytrack_labels=4, scale_ticks=0,height=1,
+    #gd_track_for_features = gd_diagram.new_track(4 - 1 * i,name=record, greytrack=True, greytrack_labels=4, scale_ticks=0,height=1,
 
-    #gd_track_for_features = gd_diagram.new_track(1,name=record, greytrack=True, greytrack_labels=1, scale_ticks=0,height=1,
+    gd_track_for_features = gd_diagram.new_track(1,name=record, greytrack=True, greytrack_labels=1, scale_ticks=0,height=1,
                                                  start=0, end=record_length)
     name_for_featureset = 'gd_set_features_'+record
     print('--------------------------------------------------------------->'+name_for_featureset)
